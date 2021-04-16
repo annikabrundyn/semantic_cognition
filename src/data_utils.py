@@ -37,7 +37,7 @@ def make_data_matrix(root_dir, imgs_per_item):
 
 
 ### TODO: currently random split - consider doing stratified split based on item
-def train_test_split(samples, test_pcnt=0.2, seed=1923):
+def train_test_split(samples, test_pcnt, seed):
     random.seed(seed)
     random.shuffle(samples)
 
