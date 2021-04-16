@@ -1,10 +1,7 @@
 import os
 import numpy as np
 
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
-
-from PIL import Image
+import random
 
 
 def make_data_matrix(root_dir, imgs_per_item):
@@ -39,6 +36,15 @@ def make_data_matrix(root_dir, imgs_per_item):
     return img_matrix
 
 
+### TODO: currently random split - consider doing stratified split based on item
+def train_test_split(samples, test_pcnt=0.2, seed=1923):
+    random.seed(seed)
+    random.shuffle(samples)
 
+    n_test_samples = int(test_pcnt * len(samples))
+    test = samples[:n_test_samples]
+    train = samples[n_test_samples:]
+
+    return train, test
 
 
