@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
 
-import numpy as np
 import torch
 from torch import nn
 import pytorch_lightning as pl
