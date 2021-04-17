@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
+from torchvision.models import resnet18
 
 
 class Net(nn.Module):
@@ -51,10 +52,13 @@ class SimpleCNN(nn.Module):
 
 
 # TODO - finish this
+# NOTE - the image size must be greater than 64 x 64 for this to work from what i can tell (bc of the many downsampling layers)
 class PretrainedResnet18(nn.Module):
     def __init__(self):
         super().__init__()
+        self.resnet = resnet18(pretrained=True)
+        self.resent.fc = nn.Linear(512, 36)
 
     def forward(self, x):
-        pass
+        return self.resnet(x)
 
