@@ -41,6 +41,7 @@ class SemanticDataModule(pl.LightningDataModule):
     def __init__(self,
                  root_dir,
                  imgs_per_item,
+                 center_crop_size=5,
                  batch_size=16,
                  img_transform=None,
                  test_pcnt=0.2,
@@ -49,6 +50,7 @@ class SemanticDataModule(pl.LightningDataModule):
         super().__init__()
         self.root_dir = root_dir
         self.imgs_per_item = imgs_per_item
+        self.center_crop_size = center_crop_size
         self.batch_size = batch_size
         self.test_pcnt = test_pcnt
         self.seed = seed
