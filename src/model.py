@@ -77,14 +77,6 @@ if __name__ == "__main__":
     pl.seed_everything(args.seed)
 
     # data
-    # dm = SemanticDataModule(
-    #     root_dir=args.root_dir,
-    #     imgs_per_item=args.imgs_per_item,
-    #     crop_size=args.crop_size,
-    #     seed=seed,
-    #     batch_size=args.batch_size,
-    #     num_workers=args.num_workers,
-    # )
     dm = SemanticDataModule(**args.__dict__)
     dm.prepare_data()
 
