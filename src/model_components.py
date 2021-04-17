@@ -5,24 +5,31 @@ from torchvision.models import resnet18
 
 
 class Net(nn.Module):
-    def __init__(self, img_size, hidden_size):
+    def __init__(self,
+                 feat_extractor: str,
+                 img_size: int,
+                 hidden_size: int
+                 ):
         super(Net, self).__init__()
 
-        # TODO: make it possible to substitute representation layer (e.g. pretrained resnet, etc)
-        self.representation_layer = SimpleCNN(in_channels=3)
+        try:
+            if feat_extractor == 'simple':
+                self.representation_layer = SimpleCNN(in_channels=3)
+            elif feat_extractor == 'resnet':
+                self.representation_layer = PretrainedResnet18()
+        except ValueError:
+            print("No proper feature extractor name provided")
+
         rep_size = self._calculate_rep_size(img_size)
 
         self.hidden_layer = nn.Linear(rep_size+4, hidden_size)
         self.attribute_layer = nn.Linear(hidden_size, 36)
-
 
     def _calculate_rep_size(self, img_size):
         x = torch.rand(1, 3, img_size, img_size)
         y = self.representation_layer(x)
         y = y.view(y.shape[0], -1)
         return y.shape[1]
-
-
 
     def forward(self, img, rel):
 
