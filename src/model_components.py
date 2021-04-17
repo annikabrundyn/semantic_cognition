@@ -58,7 +58,7 @@ class SimpleCNN(nn.Module):
         return x
 
 
-# TODO - finish this
+# TODO - review this
 # NOTE - the image size must be greater than 64 x 64 for this to work from what i can tell (bc of the many downsampling layers)
 class PretrainedResnet18(nn.Module):
     def __init__(self):
