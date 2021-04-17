@@ -50,15 +50,13 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
         parser.add_argument("--batch_size", type=int, default=16)
         parser.add_argument("--num_workers", type=int, default=0)
+        parser.add_argument("--seed", type=int, default=98264)
 
         return parser
 
 
 
 if __name__ == "__main__":
-    print("start training model...")
-    seed = 92675
-    pl.seed_everything(seed)
 
     # parse args
     parser = ArgumentParser()
@@ -67,15 +65,18 @@ if __name__ == "__main__":
     parser = BaseModel.add_model_specific_args(parser)
     args = parser.parse_args()
 
+    pl.seed_everything(args.seed)
+
     # data
-    dm = SemanticDataModule(
-        root_dir=args.root_dir,
-        imgs_per_item=args.imgs_per_item,
-        crop_size=args.crop_size,
-        seed=seed,
-        batch_size=args.batch_size,
-        num_workers=args.num_workers,
-    )
+    # dm = SemanticDataModule(
+    #     root_dir=args.root_dir,
+    #     imgs_per_item=args.imgs_per_item,
+    #     crop_size=args.crop_size,
+    #     seed=seed,
+    #     batch_size=args.batch_size,
+    #     num_workers=args.num_workers,
+    # )
+    dm = SemanticDataModule(**args.__dict__)
     dm.prepare_data()
 
     # model
