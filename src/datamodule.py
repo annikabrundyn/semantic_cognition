@@ -78,7 +78,7 @@ class SemanticDataModule(pl.LightningDataModule):
         return test_dl
 
 
-dm = SemanticDataModule('../data', imgs_per_item=2, batch_size=2, num_workers=0)
-dm.prepare_data()
-dl = dm.train_dataloader()
-print("hey")
+# dm = SemanticDataModule('../data', imgs_per_item=2, batch_size=2, num_workers=0)
+# dm.prepare_data()
+# dl = dm.train_dataloader()
+# print("hey")
