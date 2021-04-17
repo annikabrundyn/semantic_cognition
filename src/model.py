@@ -10,10 +10,19 @@ from src.model_components import Net
 
 
 class BaseModel(pl.LightningModule):
-    def __init__(self, lr=0.01, **kwargs):
+    def __init__(self,
+                 feat_extractor: str,
+                 img_size: int,
+                 hidden_size: int,
+                 lr: float,
+                 **kwargs):
         super().__init__()
         self.save_hyperparameters()
-        self.net = Net(feat_extractor='resnet', img_size=64, hidden_size=128)
+
+        self.net = Net(feat_extractor=self.hparams.feat_extractor,
+                       img_size=self.hparams.crop_size,
+                       hidden_size=self.hparams.hidden_size)
+
         self.criterion = nn.MSELoss()
 
     def forward(self, img, rel):
