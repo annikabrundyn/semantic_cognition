@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
 
-from .data_utils import make_data_matrix, train_test_split
+from src.data_utils import make_data_matrix, train_test_split
 
 
 class SemanticDataset(Dataset):
@@ -33,7 +33,7 @@ class SemanticDataset(Dataset):
         if self.img_transform:
             image = self.img_transform(image)
 
-        return (item_name, image, rel, attr)
+        return {'item_name':item_name, 'img':image, 'rel':rel, 'attr':attr}
 
 
 class SemanticDataModule(pl.LightningDataModule):
@@ -67,10 +67,16 @@ class SemanticDataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         train_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
-        train_dl = DataLoader(train_ds, batch_size=self.batch_size, num_workers=self.num_workers)
+        train_dl = DataLoader(train_ds, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
         return train_dl
 
     def test_dataloader(self):
         test_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
-        test_dl = DataLoader(test_ds, batch_size=self.batch_size, num_workers=)
+        test_dl = DataLoader(test_ds, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
         return test_dl
+
+
+dm = SemanticDataModule('../data', imgs_per_item=2, batch_size=2, num_workers=0)
+dm.prepare_data()
+dl = dm.train_dataloader()
+print("hey")

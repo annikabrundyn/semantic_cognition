@@ -1,6 +1,8 @@
 import os
 import numpy as np
 
+import torch
+
 import random
 
 
@@ -25,8 +27,10 @@ def make_data_matrix(root_dir, imgs_per_item):
 
     for sample in data2:
         item_name = sample[0]
-        rel = list(sample[1:1 + nrel])
-        attr = list(sample[1 + nrel:])
+        rel = np.array(sample[1:1 + nrel], dtype=np.float)
+        attr = np.array(sample[1 + nrel:], dtype=np.float)
+        print(rel.shape)
+        print(attr.shape)
 
         for idx in range(1, imgs_per_item + 1):
             item_img = os.path.join(item_name, f"Image_{idx}.jpg")
