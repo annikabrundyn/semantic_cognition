@@ -35,6 +35,7 @@ class Net(nn.Module):
         return output, hidden, rep
 
 
+
 class SimpleCNN(nn.Module):
     def __init__(self, in_channels):
         super().__init__()
@@ -48,4 +49,12 @@ class SimpleCNN(nn.Module):
         x = F.relu(self.conv2(x))
         return x
 
+
+# TODO - finish this
+class PretrainedResnet18(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):
+        pass
 
