@@ -13,7 +13,7 @@ class BaseModel(pl.LightningModule):
     def __init__(self, lr=0.01):
         super().__init__()
         self.save_hyperparameters()
-        self.net = Net(64, 10)
+        self.net = Net(10, 10)
         self.criterion = nn.MSELoss()
 
     def forward(self, img, rel):
