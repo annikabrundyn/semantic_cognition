@@ -10,7 +10,7 @@ from src.model_components import Net
 
 
 class BaseModel(pl.LightningModule):
-    def __init__(self, lr=0.01):
+    def __init__(self, lr=0.01, **kwargs):
         super().__init__()
         self.save_hyperparameters()
         self.net = Net(feat_extractor='resnet', img_size=64, hidden_size=128)
@@ -41,7 +41,7 @@ class BaseModel(pl.LightningModule):
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
 
-        parser.add_argument("--root_dir", type=str, help='path to data folder', default='data')
+        parser.add_argument("--root_dir", type=str, help='path to data folder', default='../data')
         parser.add_argument("--feat_extractor", type=str, default='simple', choices=['simple', 'resnet18'])
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=5)
@@ -51,15 +51,36 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--batch_size", type=int, default=16)
         parser.add_argument("--num_workers", type=int, default=0)
 
+        return parser
+
+
 
 if __name__ == "__main__":
+    print("start training model...")
+    seed = 92675
+    pl.seed_everything(seed)
 
+    # parse args
     parser = ArgumentParser()
+    parser = pl.Trainer.add_argparse_args(parser)
 
-    dm = SemanticDataModule('../data', imgs_per_item=5, batch_size=2, num_workers=0)
+    parser = BaseModel.add_model_specific_args(parser)
+    args = parser.parse_args()
+
+    # data
+    dm = SemanticDataModule(
+        root_dir=args.root_dir,
+        imgs_per_item=args.imgs_per_item,
+        crop_size=args.crop_size,
+        seed=seed,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+    )
     dm.prepare_data()
 
-    model = BaseModel()
+    # model
+    model = BaseModel(**args.__dict__)
 
-    trainer = pl.Trainer()
+    # train
+    trainer = pl.Trainer().from_argparse_args(args)
     trainer.fit(model, dm.train_dataloader())
