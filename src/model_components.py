@@ -64,8 +64,17 @@ class PretrainedResnet18(nn.Module):
     def __init__(self):
         super().__init__()
         self.resnet = resnet18(pretrained=True)
-        self.resent.fc = nn.Linear(512, 36)
+        self.resnet.avgpool = Identity()
+        self.resnet.fc = Identity()
 
     def forward(self, x):
         return self.resnet(x)
 
+
+
+class Identity(nn.Module):
+    def __init__(self):
+        super(Identity, self).__init__()
+
+    def forward(self, x):
+        return x

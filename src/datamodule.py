@@ -42,7 +42,7 @@ class SemanticDataModule(pl.LightningDataModule):
     def __init__(self,
                  root_dir,
                  imgs_per_item,
-                 crop_size=10,
+                 crop_size=64,
                  batch_size=16,
                  img_transform=None,
                  test_pcnt=0.2,
