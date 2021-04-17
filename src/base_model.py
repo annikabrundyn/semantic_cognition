@@ -1,31 +1,42 @@
 from argparse import ArgumentParser
 
-import torch
-import pytorch_lightning as pl
 import numpy as np
+import torch
+from torch import nn
+import pytorch_lightning as pl
 
 from src.datamodule import SemanticDataModule
+from src.model_components import Net
 
 
 class BaseModel(pl.LightningModule):
-    def __init__(self):
+    def __init__(self, lr=0.01):
         super().__init__()
         self.save_hyperparameters()
+        self.net = Net(64, 10)
+        self.criterion = nn.MSELoss()
 
-    def forward(self):
-        pass
+    def forward(self, img, rel):
+        return self.net(img, rel)
 
-    def training_step(self):
-        pass
+    def training_step(self, batch, batch_idx):
 
-    def validation_step(self, *args, **kwargs):
-        pass
+        # call forward
+        pred, hidden, rep = self(batch['img'], batch['rel'])
 
-    def test_step(self, *args, **kwargs):
-        pass
+        loss = self.criterion(pred, batch['attr'])
+        return loss
+
+    # def validation_step(self, *args, **kwargs):
+    #     pass
+
+    # def test_step(self, *args, **kwargs):
+    #     pass
 
     def configure_optimizers(self):
-        pass
+        opt = torch.optim.Adam(self.net.parameters(), lr=self.hparams.lr)
+        return [opt]
+
 
 
 if __name__ == "__main__":

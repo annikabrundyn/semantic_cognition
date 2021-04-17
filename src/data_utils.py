@@ -27,10 +27,8 @@ def make_data_matrix(root_dir, imgs_per_item):
 
     for sample in data2:
         item_name = sample[0]
-        rel = np.array(sample[1:1 + nrel], dtype=np.float)
-        attr = np.array(sample[1 + nrel:], dtype=np.float)
-        print(rel.shape)
-        print(attr.shape)
+        rel = np.array(sample[1:1 + nrel], dtype='float32')
+        attr = np.array(sample[1 + nrel:], dtype='float32')
 
         for idx in range(1, imgs_per_item + 1):
             item_img = os.path.join(item_name, f"Image_{idx}.jpg")

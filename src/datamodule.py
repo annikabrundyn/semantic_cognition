@@ -1,5 +1,6 @@
 import os
 
+import torch
 import pytorch_lightning as pl
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
@@ -41,7 +42,7 @@ class SemanticDataModule(pl.LightningDataModule):
     def __init__(self,
                  root_dir,
                  imgs_per_item,
-                 center_crop_size=5,
+                 crop_size=10,
                  batch_size=16,
                  img_transform=None,
                  test_pcnt=0.2,
@@ -50,7 +51,7 @@ class SemanticDataModule(pl.LightningDataModule):
         super().__init__()
         self.root_dir = root_dir
         self.imgs_per_item = imgs_per_item
-        self.center_crop_size = center_crop_size
+        self.crop_size = crop_size
         self.batch_size = batch_size
         self.test_pcnt = test_pcnt
         self.seed = seed
@@ -59,7 +60,8 @@ class SemanticDataModule(pl.LightningDataModule):
         if img_transform:
             self.img_transform = img_transform
         else:
-            self.img_transform = transforms.Compose([transforms.CenterCrop(5),
+            self.img_transform = transforms.Compose([transforms.Resize(self.crop_size),
+                                                     transforms.CenterCrop(self.crop_size),
                                                      transforms.ToTensor(),
                                                      ])
 
