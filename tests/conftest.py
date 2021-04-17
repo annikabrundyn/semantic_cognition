@@ -4,7 +4,7 @@ import pytorch_lightning as pl
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--root_dir",
+        "--data_dir",
         required=True,
         action="store"
     )
@@ -12,7 +12,7 @@ def pytest_addoption(parser):
 
 @pytest.fixture()
 def data_dir(request):
-    return request.config.getoption("--root_dir")
+    return request.config.getoption("--data_dir")
 
 
 @pytest.fixture

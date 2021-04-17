@@ -7,7 +7,7 @@ from torchvision.models import resnet18
 class Net(nn.Module):
     def __init__(self,
                  feat_extractor: str,
-                 img_size: int,
+                 crop_size: int,
                  hidden_size: int
                  ):
         super(Net, self).__init__()
@@ -20,7 +20,7 @@ class Net(nn.Module):
         except ValueError:
             print("No proper feature extractor name provided")
 
-        rep_size = self._calculate_rep_size(img_size)
+        rep_size = self._calculate_rep_size(crop_size)
 
         self.hidden_layer = nn.Linear(rep_size+4, hidden_size)
         self.attribute_layer = nn.Linear(hidden_size, 36)

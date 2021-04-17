@@ -4,14 +4,14 @@ import torch
 from torch import nn
 import pytorch_lightning as pl
 
-from src.datamodule import SemanticDataModule
-from src.model_components import Net
+from datamodule import SemanticDataModule
+from model_components import Net
 
 
 class BaseModel(pl.LightningModule):
     def __init__(self,
                  feat_extractor: str,
-                 img_size: int,
+                 crop_size: int,
                  hidden_size: int,
                  lr: float,
                  **kwargs):
@@ -19,7 +19,7 @@ class BaseModel(pl.LightningModule):
         self.save_hyperparameters()
 
         self.net = Net(feat_extractor=self.hparams.feat_extractor,
-                       img_size=self.hparams.crop_size,
+                       crop_size=self.hparams.crop_size,
                        hidden_size=self.hparams.hidden_size)
 
         self.criterion = nn.MSELoss()

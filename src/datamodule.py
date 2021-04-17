@@ -6,7 +6,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
 
-from src.data_utils import make_data_matrix, train_test_split
+from data_utils import make_data_matrix, train_test_split
 
 
 class SemanticDataset(Dataset):
