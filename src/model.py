@@ -22,6 +22,7 @@ class BaseModel(pl.LightningModule):
                        crop_size=self.hparams.crop_size,
                        hidden_size=self.hparams.hidden_size)
 
+        # TODO: should this be swapped for cross entropy?
         self.criterion = nn.MSELoss()
 
     def forward(self, img, rel):
