@@ -16,7 +16,6 @@ class Net(nn.Module):
             if feat_extractor == 'simple':
                 self.representation_layer = SimpleCNN(in_channels=3)
             elif feat_extractor == 'resnet':
-                # TODO: freeze this in the case of resnet
                 self.representation_layer = PretrainedResnet18()
         except ValueError:
             print("No proper feature extractor name provided")
@@ -67,6 +66,10 @@ class PretrainedResnet18(nn.Module):
         self.resnet = resnet18(pretrained=True)
         self.resnet.avgpool = Identity()
         self.resnet.fc = Identity()
+
+        # freeze all layers
+        for param in self.resnet.parameters():
+            param.requires_grad = False
 
     def forward(self, x):
         return self.resnet(x)

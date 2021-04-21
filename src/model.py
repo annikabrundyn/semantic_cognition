@@ -51,8 +51,9 @@ class BaseModel(pl.LightningModule):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
 
         parser.add_argument("--root_dir", type=str, help='path to data folder', default='../data')
-        parser.add_argument("--feat_extractor", type=str, default='simple', choices=['simple', 'resnet18'])
+        parser.add_argument("--feat_extractor", type=str, default='simple', choices=['simple', 'resnet'])
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
+        parser.add_argument("--hidden_size", type=int, help='size of cropped square input images', default=128)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=5)
 
         # hyperparameters
