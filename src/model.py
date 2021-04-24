@@ -54,12 +54,12 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--feat_extractor", type=str, default='simple', choices=['simple', 'resnet'])
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
         parser.add_argument("--hidden_size", type=int, help='size of cropped square input images', default=128)
-        parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=5)
+        parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=10)
 
         # hyperparameters
         parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
         parser.add_argument("--batch_size", type=int, default=32)
-        parser.add_argument("--num_workers", type=int, default=0)
+        parser.add_argument("--num_workers", type=int, default=4)
         parser.add_argument("--seed", type=int, default=98264)
 
         return parser
