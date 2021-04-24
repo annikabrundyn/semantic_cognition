@@ -68,18 +68,18 @@ class SemanticDataModule(pl.LightningDataModule):
                                                      ])
 
     def prepare_data(self):
-        samples = make_data_matrix(self.root_dir, self.imgs_per_item)
-        self.train_samples, self.test_samples = train_test_split(samples, self.test_pcnt, self.seed)
+        self.samples = make_data_matrix(self.root_dir, self.imgs_per_item)
+        #self.train_samples, self.test_samples = train_test_split(samples, self.test_pcnt, self.seed)
 
     def train_dataloader(self):
-        train_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
+        train_ds = SemanticDataset(self.samples, self.root_dir, self.img_transform)
         train_dl = DataLoader(train_ds, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
         return train_dl
 
-    def test_dataloader(self):
-        test_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
-        test_dl = DataLoader(test_ds, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
-        return test_dl
+    # def test_dataloader(self):
+    #     test_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
+    #     test_dl = DataLoader(test_ds, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
+    #     return test_dl
 
 
 # dm = SemanticDataModule('../data', imgs_per_item=2, batch_size=2, num_workers=0)
