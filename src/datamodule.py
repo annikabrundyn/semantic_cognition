@@ -44,10 +44,8 @@ class SemanticDataModule(pl.LightningDataModule):
                  imgs_per_item,
                  crop_size,
                  seed,
-                 batch_size=16,
-                 num_workers=4,
-                 img_transform=None,
-                 test_pcnt=0.2,
+                 batch_size,
+                 num_workers,
                  **kwargs,
                  ):
         super().__init__()
@@ -55,17 +53,14 @@ class SemanticDataModule(pl.LightningDataModule):
         self.imgs_per_item = imgs_per_item
         self.crop_size = crop_size
         self.batch_size = batch_size
-        self.test_pcnt = test_pcnt
+        #self.test_pcnt = test_pcnt
         self.seed = seed
         self.num_workers = num_workers
 
-        if img_transform:
-            self.img_transform = img_transform
-        else:
-            self.img_transform = transforms.Compose([transforms.Resize(self.crop_size),
-                                                     transforms.CenterCrop(self.crop_size),
-                                                     transforms.ToTensor(),
-                                                     ])
+        self.img_transform = transforms.Compose([transforms.Resize(self.crop_size),
+                                                 transforms.CenterCrop(self.crop_size),
+                                                 transforms.ToTensor(),
+                                                 ])
 
     def prepare_data(self):
         self.samples = make_data_matrix(self.root_dir, self.imgs_per_item)
