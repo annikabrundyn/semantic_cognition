@@ -29,7 +29,7 @@ class SemanticDataset(Dataset):
         item_name, img_path, rel, attr = self.samples[idx]
 
         img_path = os.path.join(self.root_dir, img_path)
-        image = Image.open(img_path)
+        image = Image.open(img_path).convert("RGB")
 
         if self.img_transform:
             image = self.img_transform(image)
