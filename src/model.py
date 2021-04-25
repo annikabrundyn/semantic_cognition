@@ -46,7 +46,7 @@ class BaseModel(pl.LightningModule):
         # save representations
         if (self.trainer.current_epoch + 1) % self.hparams.save_epoch_freq == 0:
             for i, item in enumerate(batch['item_name']):
-                self.store_avg_reps[item] += rep[i].detach()
+                self.store_avg_reps[item] += rep[i]
                 self.count += 1
 
         return loss
