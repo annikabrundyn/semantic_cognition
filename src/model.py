@@ -70,7 +70,7 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
         parser.add_argument("--hidden_size", type=int, help='size of cropped square input images', default=128)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=20)
-        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=300)
+        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=200)
 
         # hyperparameters
         parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
