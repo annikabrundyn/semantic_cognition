@@ -30,7 +30,6 @@ class BaseModel(pl.LightningModule):
         self.criterion = nn.MultiLabelSoftMarginLoss()
 
         # for saving representations
-        # TODO: generalize this so it infers the shape - not manually entered
         self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape), requires_grad=False))
         self.count = 0
 
