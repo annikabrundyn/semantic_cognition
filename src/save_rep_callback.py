@@ -18,9 +18,9 @@ class SaveRepCallback(Callback):
             epoch_path = os.path.join(base_dir, f"epoch_{trainer.current_epoch + 1}")
             os.makedirs(epoch_path)
 
-            d = pl_module.store_avg_reps.items().cpu()
+            d = pl_module.store_avg_reps.cpu()
 
-            for item_key, rep in d:
+            for item_key, rep in d.items():
 
                 # avg the values
                 rep = torch.div(rep, pl_module.hparams.imgs_per_item)
@@ -29,7 +29,7 @@ class SaveRepCallback(Callback):
 
             print(pl_module.count)
             pl_module.count = 0
-            pl_module.store_avg_reps = defaultdict(lambda: torch.zeros((pl_module.net.rep3d_shape),
+            pl_module.store_avg_reps = defaultdict(lambda: torch.zeros(pl_module.net.rep3d_shape,
                                                                        requires_grad=False,
                                                                        device=pl_module.device))
 
