@@ -31,7 +31,7 @@ class BaseModel(pl.LightningModule):
 
         # for saving representations
         # TODO: generalize this so it infers the shape - not manually entered
-        self.store_avg_reps = defaultdict(lambda: torch.zeros((32, 29, 29), requires_grad=False))
+        self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape), requires_grad=False))
         self.count = 0
 
     def forward(self, img, rel):

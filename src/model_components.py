@@ -28,6 +28,9 @@ class Net(nn.Module):
     def _calculate_rep_size(self, img_size):
         x = torch.rand(1, 3, img_size, img_size)
         y = self.representation_layer(x)
+
+        self.rep3d_shape = y.squeeze(0).shape
+
         y = y.view(y.shape[0], -1)
         return y.shape[1]
 
