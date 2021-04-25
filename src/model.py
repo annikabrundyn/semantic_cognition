@@ -26,8 +26,8 @@ class BaseModel(pl.LightningModule):
                        crop_size=self.hparams.crop_size,
                        hidden_size=self.hparams.hidden_size)
 
-        # TODO: not sure what the loss should be - in hw nn.MSELoss
-        self.criterion = nn.MultiLabelSoftMarginLoss()
+        # TODO: not sure what the loss should be - in hw nn.MSELoss, MultiLabelSoftMarginLoss()
+        self.criterion = nn.MSELoss()
 
         # for saving representations
         self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape), requires_grad=False))
