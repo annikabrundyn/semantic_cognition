@@ -27,7 +27,9 @@ class SaveRepCallback(Callback):
 
             print(pl_module.count)
             pl_module.count = 0
-            pl_module.store_avg_reps = defaultdict(lambda: torch.zeros((32, 29, 29), requires_grad=False))
+            pl_module.store_avg_reps = defaultdict(lambda: torch.zeros((32, 29, 29),
+                                                                       requires_grad=False,
+                                                                       device=pl_module.device))
 
 
 
