@@ -29,6 +29,7 @@ class BaseModel(pl.LightningModule):
         # TODO: not sure what the loss should be - in hw nn.MSELoss
         self.criterion = nn.MultiLabelSoftMarginLoss()
 
+        # for saving representations
         self.store_avg_reps = defaultdict(lambda: torch.zeros((32, 29, 29), requires_grad=False))
         self.count = 0
 
@@ -69,7 +70,7 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
         parser.add_argument("--hidden_size", type=int, help='size of cropped square input images', default=128)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=20)
-        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=50)
+        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=300)
 
         # hyperparameters
         parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
