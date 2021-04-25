@@ -34,9 +34,9 @@ class Net(nn.Module):
     def forward(self, img, rel):
 
         rep = F.relu(self.representation_layer(img))
-        rep = rep.view(rep.shape[0], -1)
+        rep_flat = rep.view(rep.shape[0], -1)
 
-        input_hidden = torch.cat([rep, rel], dim=1)
+        input_hidden = torch.cat([rep_flat, rel], dim=1)
         hidden = F.relu(self.hidden_layer(input_hidden))
 
         output = torch.sigmoid(self.attribute_layer(hidden))

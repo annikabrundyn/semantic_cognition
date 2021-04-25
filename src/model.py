@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from collections import defaultdict
 
 import torch
 from torch import nn
@@ -6,14 +7,17 @@ import pytorch_lightning as pl
 
 from datamodule import SemanticDataModule
 from model_components import Net
+from save_rep_callback import SaveRepCallback
 
 
 class BaseModel(pl.LightningModule):
     def __init__(self,
                  feat_extractor: str,
+                 imgs_per_item: int,
                  crop_size: int,
                  hidden_size: int,
                  lr: float,
+                 save_epoch_freq: int,
                  **kwargs):
         super().__init__()
         self.save_hyperparameters()
@@ -25,6 +29,9 @@ class BaseModel(pl.LightningModule):
         # TODO: not sure what the loss should be - in hw nn.MSELoss
         self.criterion = nn.MultiLabelSoftMarginLoss()
 
+        self.store_avg_reps = defaultdict(lambda: torch.zeros((32, 29, 29), requires_grad=False))
+        self.count = 0
+
     def forward(self, img, rel):
         return self.net(img, rel)
 
@@ -34,6 +41,13 @@ class BaseModel(pl.LightningModule):
         pred, hidden, rep = self(batch['img'], batch['rel'])
 
         loss = self.criterion(pred, batch['attr'])
+
+        # save representations
+        if (self.trainer.current_epoch + 1) % self.hparams.save_epoch_freq == 0:
+            for i, item in enumerate(batch['item_name']):
+                self.store_avg_reps[item] += rep[i].detach()
+                self.count += 1
+
         return loss
 
     # def validation_step(self, *args, **kwargs):
@@ -55,6 +69,7 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
         parser.add_argument("--hidden_size", type=int, help='size of cropped square input images', default=128)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=20)
+        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=50)
 
         # hyperparameters
         parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
@@ -85,5 +100,5 @@ if __name__ == "__main__":
     model = BaseModel(**args.__dict__)
 
     # train
-    trainer = pl.Trainer().from_argparse_args(args)
+    trainer = pl.Trainer.from_argparse_args(args, callbacks=[SaveRepCallback()])
     trainer.fit(model, dm.train_dataloader())
