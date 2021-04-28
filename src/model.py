@@ -31,7 +31,7 @@ class BaseModel(pl.LightningModule):
 
         # for saving representations
         self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape), requires_grad=False))
-        self.count = 0
+        #self.count = 0
 
     def forward(self, img, rel):
         return self.net(img, rel)
@@ -47,7 +47,7 @@ class BaseModel(pl.LightningModule):
         if (self.trainer.current_epoch + 1) % self.hparams.save_epoch_freq == 0:
             for i, item in enumerate(batch['item_name']):
                 self.store_avg_reps[item] += rep[i]
-                self.count += 1
+                #self.count += 1
 
         return loss
 
