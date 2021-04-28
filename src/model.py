@@ -30,7 +30,7 @@ class BaseModel(pl.LightningModule):
         self.criterion = nn.MSELoss()
 
         # for saving representations
-        self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape), requires_grad=False))
+        self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape)))
         #self.count = 0
 
     def forward(self, img, rel):
