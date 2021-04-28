@@ -31,7 +31,6 @@ class BaseModel(pl.LightningModule):
 
         # for saving representations
         self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape), requires_grad=False))
-        print(self.store_avg_reps.device)
         #self.count = 0
 
     def forward(self, img, rel):
