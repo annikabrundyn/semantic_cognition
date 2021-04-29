@@ -80,6 +80,9 @@ class SemanticDataModule(pl.LightningDataModule):
         return train_dl
 
 
+
+
+
     # def test_dataloader(self):
     #     test_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
     #     test_dl = DataLoader(test_ds, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
