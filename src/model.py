@@ -29,10 +29,6 @@ class BaseModel(pl.LightningModule):
         # TODO: not sure what the loss should be - in hw nn.MSELoss, MultiLabelSoftMarginLoss()
         self.criterion = nn.MSELoss()
 
-        # for saving representations
-        self.store_avg_reps = defaultdict(lambda: torch.zeros((self.net.rep3d_shape)))
-        #self.count = 0
-
     def forward(self, img, rel):
         return self.net(img, rel)
 
@@ -59,12 +55,12 @@ class BaseModel(pl.LightningModule):
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
 
-        parser.add_argument("--root_dir", type=str, help='path to data folder', default='/opt/datastore')
+        parser.add_argument("--root_dir", type=str, help='path to data folder', default='../data')
         parser.add_argument("--feat_extractor", type=str, default='simple', choices=['simple', 'resnet'])
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
         parser.add_argument("--hidden_size", type=int, help='size of cropped square input images', default=128)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=265)
-        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=5)
+        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=1)
 
         # hyperparameters
         parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
@@ -95,5 +91,5 @@ if __name__ == "__main__":
     model = BaseModel(**args.__dict__)
 
     # train
-    trainer = pl.Trainer.from_argparse_args(args)
+    trainer = pl.Trainer.from_argparse_args(args, callbacks=[SaveRepCallback(dm.unshuffled_train_dataloader())])
     trainer.fit(model, dm.train_dataloader())

@@ -11,7 +11,7 @@ from data_utils import make_data_matrix, train_test_split
 
 class SemanticDataset(Dataset):
 
-    def __init__(self, samples, root_dir, img_transform=None):
+    def __init__(self, samples, root_dir, img_transform=None, fix_item_class=None):
         """
         Args:
             samples (list): each element (item, img path, rel, attr).
@@ -21,6 +21,7 @@ class SemanticDataset(Dataset):
         self.samples = samples
         self.root_dir = root_dir
         self.img_transform = img_transform
+        self.fix_item_class = fix_item_class
 
     def __len__(self):
         return len(self.samples)
@@ -35,6 +36,8 @@ class SemanticDataset(Dataset):
             image = self.img_transform(image)
 
         return {'item_name':item_name, 'img':image, 'rel':rel, 'attr':attr}
+
+
 
 
 class SemanticDataModule(pl.LightningDataModule):
@@ -62,14 +65,20 @@ class SemanticDataModule(pl.LightningDataModule):
                                                  transforms.ToTensor(),
                                                  ])
 
+        self.item_names = ["canary", "daisy", "oak", "pine", "robin", "rose", "salmon", "sunfish"]
+
     def prepare_data(self):
         self.samples = make_data_matrix(self.root_dir, self.imgs_per_item)
-        #self.train_samples, self.test_samples = train_test_split(samples, self.test_pcnt, self.seed)
+        self.class_samples = {}
+
+        for item_name in self.item_names:
+            self.class_samples[item_name] = [s for s in self.samples if s[0] == item_name]
 
     def train_dataloader(self):
         train_ds = SemanticDataset(self.samples, self.root_dir, self.img_transform)
         train_dl = DataLoader(train_ds, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
         return train_dl
+
 
     # def test_dataloader(self):
     #     test_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
