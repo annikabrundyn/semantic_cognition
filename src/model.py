@@ -60,11 +60,11 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
         parser.add_argument("--hidden_size", type=int, help='size of cropped square input images', default=128)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=265)
-        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=1)
+        parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=50)
 
         # hyperparameters
-        parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
-        parser.add_argument("--batch_size", type=int, default=32)
+        parser.add_argument("--lr", type=float, default=0.0001, help="learning rate")
+        parser.add_argument("--batch_size", type=int, default=64)
         parser.add_argument("--num_workers", type=int, default=4)
         parser.add_argument("--seed", type=int, default=98264)
 
