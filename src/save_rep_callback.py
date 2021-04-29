@@ -1,7 +1,6 @@
 import os
 from collections import defaultdict
 
-import numpy as np
 import torch
 
 from pytorch_lightning.callbacks import Callback
@@ -34,7 +33,8 @@ class SaveRepCallback(Callback):
                     _, _, rep = pl_module(batch['img'].to(pl_module.device), batch['rel'].to(pl_module.device))
 
                     # element wise sum over batch
-                    store_avg_reps[item_name] += torch.sum(rep, dim=0)
+                    rep = torch.sum(rep, dim=0)
+                    store_avg_reps[item_name] += rep
 
                 store_avg_reps[item_name] = torch.div(store_avg_reps[item_name], len(dl.dataset))
                 torch.save(rep, f"{epoch_path}/{item_name}.pt")
