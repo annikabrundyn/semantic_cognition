@@ -16,6 +16,7 @@ class SaveRepCallback(Callback):
 
         # at end, reset and save results
         if (trainer.current_epoch + 1) % pl_module.hparams.save_epoch_freq == 0:
+            print("generating representations, averaging and saving result")
 
             # create new dict for saving rep
             store_avg_reps = defaultdict(lambda: torch.zeros((pl_module.net.rep3d_shape),
@@ -30,7 +31,7 @@ class SaveRepCallback(Callback):
             for item_name, dl in self.dl_dict.items():
                 for batch in dl:
 
-                    _, _, rep = pl_module(batch['img'], batch['rel'])
+                    _, _, rep = pl_module(batch['img'].to(pl_module.device), batch['rel'].to(pl_module.device))
 
                     # element wise sum over batch
                     store_avg_reps[item_name] += torch.sum(rep, dim=0)
