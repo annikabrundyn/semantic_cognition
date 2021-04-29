@@ -16,7 +16,7 @@ class SaveRepCallback(Callback):
 
         # at end, reset and save results
         if (trainer.current_epoch + 1) % pl_module.hparams.save_epoch_freq == 0:
-            print("generating representations, averaging and saving result")
+            print("generating representations and saving result")
 
             # create new dict for saving rep
             store_avg_reps = defaultdict(lambda: torch.zeros((pl_module.net.rep3d_shape),
