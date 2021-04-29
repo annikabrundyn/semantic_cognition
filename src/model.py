@@ -91,5 +91,5 @@ if __name__ == "__main__":
     model = BaseModel(**args.__dict__)
 
     # train
-    trainer = pl.Trainer.from_argparse_args(args, callbacks=[SaveRepCallback(dm.unshuffled_train_dataloader())])
+    trainer = pl.Trainer.from_argparse_args(args, callbacks=[SaveRepCallback(dm.item_dataloaders())])
     trainer.fit(model, dm.train_dataloader())

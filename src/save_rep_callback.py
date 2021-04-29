@@ -9,8 +9,8 @@ from pytorch_lightning.callbacks import Callback
 
 class SaveRepCallback(Callback):
 
-    def __init__(self, dl):
-        self.dl = dl
+    def __init__(self, dl_dict):
+        self.dl_dict = dl_dict
 
     def on_train_epoch_end(self, trainer, pl_module, outputs):
 
@@ -21,41 +21,34 @@ class SaveRepCallback(Callback):
             store_avg_reps = defaultdict(lambda: torch.zeros((pl_module.net.rep3d_shape),
                                                              requires_grad=False,
                                                              device=pl_module.device))
-            count = 0
 
             # create folder to store
             base_dir = os.path.split(trainer.checkpoint_callback.dirpath)[0]
             epoch_path = os.path.join(base_dir, f"epoch_{trainer.current_epoch + 1}")
             os.makedirs(epoch_path)
 
+            for item_name, dl in self.dl_dict.items():
+                for batch in dl:
 
-            j = 0
-            for batch in self.dl:
+                    _, _, rep = pl_module(batch['img'], batch['rel'])
 
-                if j > 10:
-                    break
+                    # element wise sum over batch
+                    store_avg_reps[item_name] += torch.sum(rep, dim=0)
 
-                _, _, rep = pl_module(batch['img'], batch['rel'])
-
-                for i, item in enumerate(batch['item_name']):
-                    store_avg_reps[item] += rep[i]
-
-                j += 1
+                store_avg_reps[item_name] = torch.div(store_avg_reps[item_name], len(dl.dataset))
+                torch.save(rep, f"{epoch_path}/{item_name}.pt")
 
 
-            for item_key, rep in store_avg_reps.items():
-
-                # avg the values
-                rep = torch.div(rep, pl_module.hparams.imgs_per_item)
-                torch.save(rep, f"{epoch_path}/{item_key}.pt")
-                #rep = rep.numpy()
-                #np.save(f"{epoch_path}/{item_key}", rep)
-
-            #print(pl_module.count)
-            #pl_module.count = 0
-            #pl_module.store_avg_reps = defaultdict(lambda: torch.zeros(pl_module.net.rep3d_shape,
-                                                                       #requires_grad=False,
-                                                                       #device=pl_module.device))
+            # for item_key, rep in store_avg_reps.items():
+            #
+            #     #rep = rep.numpy()
+            #     #np.save(f"{epoch_path}/{item_key}", rep)
+            #
+            # #print(pl_module.count)
+            # #pl_module.count = 0
+            # #pl_module.store_avg_reps = defaultdict(lambda: torch.zeros(pl_module.net.rep3d_shape,
+            #                                                            #requires_grad=False,
+            #                                                            #device=pl_module.device))
 
 
 
