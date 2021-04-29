@@ -39,6 +39,8 @@ class BaseModel(pl.LightningModule):
 
         loss = self.criterion(pred, batch['attr'])
 
+        self.log("loss", loss)
+
         return loss
 
     # def validation_step(self, *args, **kwargs):
