@@ -38,19 +38,3 @@ class SaveRepCallback(Callback):
 
                 store_avg_reps[item_name] = torch.div(store_avg_reps[item_name], len(dl.dataset))
                 torch.save(rep, f"{epoch_path}/{item_name}.pt")
-
-
-            # for item_key, rep in store_avg_reps.items():
-            #
-            #     #rep = rep.numpy()
-            #     #np.save(f"{epoch_path}/{item_key}", rep)
-            #
-            # #print(pl_module.count)
-            # #pl_module.count = 0
-            # #pl_module.store_avg_reps = defaultdict(lambda: torch.zeros(pl_module.net.rep3d_shape,
-            #                                                            #requires_grad=False,
-            #                                                            #device=pl_module.device))
-
-
-
-
