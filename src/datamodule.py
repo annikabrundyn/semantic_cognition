@@ -11,7 +11,7 @@ from data_utils import make_data_matrix, train_test_split
 
 class SemanticDataset(Dataset):
 
-    def __init__(self, samples, root_dir, img_transform=None):
+    def __init__(self, samples, root_dir, img_transform=None, fix_item_class=None):
         """
         Args:
             samples (list): each element (item, img path, rel, attr).
@@ -21,6 +21,7 @@ class SemanticDataset(Dataset):
         self.samples = samples
         self.root_dir = root_dir
         self.img_transform = img_transform
+        self.fix_item_class = fix_item_class
 
     def __len__(self):
         return len(self.samples)
@@ -29,12 +30,14 @@ class SemanticDataset(Dataset):
         item_name, img_path, rel, attr = self.samples[idx]
 
         img_path = os.path.join(self.root_dir, img_path)
-        image = Image.open(img_path)
+        image = Image.open(img_path).convert("RGB")
 
         if self.img_transform:
             image = self.img_transform(image)
 
         return {'item_name':item_name, 'img':image, 'rel':rel, 'attr':attr}
+
+
 
 
 class SemanticDataModule(pl.LightningDataModule):
@@ -44,10 +47,8 @@ class SemanticDataModule(pl.LightningDataModule):
                  imgs_per_item,
                  crop_size,
                  seed,
-                 batch_size=16,
-                 num_workers=4,
-                 img_transform=None,
-                 test_pcnt=0.2,
+                 batch_size,
+                 num_workers,
                  **kwargs,
                  ):
         super().__init__()
@@ -55,34 +56,53 @@ class SemanticDataModule(pl.LightningDataModule):
         self.imgs_per_item = imgs_per_item
         self.crop_size = crop_size
         self.batch_size = batch_size
-        self.test_pcnt = test_pcnt
+        #self.test_pcnt = test_pcnt
         self.seed = seed
         self.num_workers = num_workers
 
-        if img_transform:
-            self.img_transform = img_transform
-        else:
-            self.img_transform = transforms.Compose([transforms.Resize(self.crop_size),
-                                                     transforms.CenterCrop(self.crop_size),
-                                                     transforms.ToTensor(),
-                                                     ])
+        self.img_transform = transforms.Compose([transforms.Resize(self.crop_size),
+                                                 transforms.CenterCrop(self.crop_size),
+                                                 transforms.ToTensor(),
+                                                 ])
+
+        self.item_names = ["canary", "daisy", "oak", "pine", "robin", "rose", "salmon", "sunfish"]
 
     def prepare_data(self):
-        samples = make_data_matrix(self.root_dir, self.imgs_per_item)
-        self.train_samples, self.test_samples = train_test_split(samples, self.test_pcnt, self.seed)
+        self.samples = make_data_matrix(self.root_dir, self.imgs_per_item)
+        self.class_samples = {}
+
+        for item_name in self.item_names:
+            self.class_samples[item_name] = [s for s in self.samples if s[0] == item_name]
 
     def train_dataloader(self):
-        train_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
+        train_ds = SemanticDataset(self.samples, self.root_dir, self.img_transform)
         train_dl = DataLoader(train_ds, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
         return train_dl
 
-    def test_dataloader(self):
-        test_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
-        test_dl = DataLoader(test_ds, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
-        return test_dl
+    def item_dataloaders(self):
+        item_dls = {}
+        for item_name in self.item_names:
+            item_ds = SemanticDataset(self.class_samples[item_name], self.root_dir, self.img_transform)
+            item_dls[item_name] = DataLoader(item_ds, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
+        return item_dls
 
 
-# dm = SemanticDataModule('../data', imgs_per_item=2, batch_size=2, num_workers=0)
+
+
+
+
+    # def test_dataloader(self):
+    #     test_ds = SemanticDataset(self.train_samples, self.root_dir, self.img_transform)
+    #     test_dl = DataLoader(test_ds, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
+    #     return test_dl
+
+
+# dm = SemanticDataModule(root_dir='../data',
+#                         imgs_per_item=200,
+#                         crop_size=64,
+#                         batch_size=4,
+#                         num_workers=0)
 # dm.prepare_data()
 # dl = dm.train_dataloader()
-# print("hey")
+
+

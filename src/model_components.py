@@ -28,15 +28,18 @@ class Net(nn.Module):
     def _calculate_rep_size(self, img_size):
         x = torch.rand(1, 3, img_size, img_size)
         y = self.representation_layer(x)
+
+        self.rep3d_shape = y.squeeze(0).shape
+
         y = y.view(y.shape[0], -1)
         return y.shape[1]
 
     def forward(self, img, rel):
 
         rep = F.relu(self.representation_layer(img))
-        rep = rep.view(rep.shape[0], -1)
+        rep_flat = rep.view(rep.shape[0], -1)
 
-        input_hidden = torch.cat([rep, rel], dim=1)
+        input_hidden = torch.cat([rep_flat, rel], dim=1)
         hidden = F.relu(self.hidden_layer(input_hidden))
 
         output = torch.sigmoid(self.attribute_layer(hidden))
@@ -58,7 +61,6 @@ class SimpleCNN(nn.Module):
         return x
 
 
-# TODO - review this
 # NOTE - the image size must be greater than 64 x 64 for this to work from what i can tell (bc of the many downsampling layers)
 class PretrainedResnet18(nn.Module):
     def __init__(self):
@@ -66,6 +68,10 @@ class PretrainedResnet18(nn.Module):
         self.resnet = resnet18(pretrained=True)
         self.resnet.avgpool = Identity()
         self.resnet.fc = Identity()
+
+        # freeze all layers
+        for param in self.resnet.parameters():
+            param.requires_grad = False
 
     def forward(self, x):
         return self.resnet(x)
