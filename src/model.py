@@ -62,8 +62,8 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--root_dir", type=str, help='path to data folder', default='../data')
         parser.add_argument("--feat_extractor", type=str, default='simple', choices=['simple', 'resnet'])
         parser.add_argument("--crop_size", type=int, help='size of cropped square input images', default=64)
-        parser.add_argument("--rep_size", type=int, default=256)
-        parser.add_argument("--hidden_size", type=int, default=128)
+        parser.add_argument("--rep_size", type=int, default=128)
+        parser.add_argument("--hidden_size", type=int, default=256)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=250)
         parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=20)
 
