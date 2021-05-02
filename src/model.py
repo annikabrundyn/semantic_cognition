@@ -28,7 +28,7 @@ class BaseModel(pl.LightningModule):
                        rep_size=self.hparams.rep_size,
                        hidden_size=self.hparams.hidden_size)
 
-        # TODO: not sure what the loss should be - in hw nn.MSELoss, MultiLabelSoftMarginLoss()
+        # same as HW
         self.criterion = nn.MSELoss()
 
     def forward(self, img, rel):
