@@ -19,6 +19,7 @@ class BaseModel(pl.LightningModule):
                  hidden_size: int,
                  lr: float,
                  save_epoch_freq: int,
+                 *args,
                  **kwargs):
         super().__init__()
         self.save_hyperparameters()
