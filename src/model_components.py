@@ -15,7 +15,7 @@ class Net(nn.Module):
 
         try:
             if feat_extractor == 'simple':
-                self.representation_layer = SimpleCNN(in_channels=3)
+                self.representation_layer = SimpleCNN(in_channels=3, rep_size=rep_size)
             elif feat_extractor == 'resnet':
                 self.representation_layer = PretrainedResnet18()
         except ValueError:

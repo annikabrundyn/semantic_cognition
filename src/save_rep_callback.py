@@ -18,7 +18,7 @@ class SaveRepCallback(Callback):
             print("generating representations and saving result")
 
             # create new dict for saving rep
-            store_avg_reps = defaultdict(lambda: torch.zeros((pl_module.net.rep3d_shape),
+            store_avg_reps = defaultdict(lambda: torch.zeros((pl_module.hparams.rep_size),
                                                              requires_grad=False,
                                                              device=pl_module.device))
 
