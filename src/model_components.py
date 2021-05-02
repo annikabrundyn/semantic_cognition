@@ -21,19 +21,19 @@ class Net(nn.Module):
         except ValueError:
             print("No proper feature extractor name provided")
 
-        rep_size = self._calculate_rep_size(crop_size)
+        #rep_size = self._calculate_rep_size(crop_size)
 
         self.hidden_layer = nn.Linear(rep_size+4, hidden_size)
         self.attribute_layer = nn.Linear(hidden_size, 36)
 
-    def _calculate_rep_size(self, img_size):
-        x = torch.rand(1, 3, img_size, img_size)
-        y = self.representation_layer(x)
-
-        self.rep3d_shape = y.squeeze(0).shape
-
-        y = y.view(y.shape[0], -1)
-        return y.shape[1]
+    # def _calculate_rep_size(self, img_size):
+    #     x = torch.rand(1, 3, img_size, img_size)
+    #     y = self.representation_layer(x)
+    #
+    #     self.rep3d_shape = y.squeeze(0).shape
+    #
+    #     y = y.view(y.shape[0], -1)
+    #     return y.shape[1]
 
     def forward(self, img, rel):
 
@@ -56,7 +56,7 @@ class SimpleCNN(nn.Module):
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(16, 32, 3, 1)
 
-        # TODO: this is still hard coded
+        # TODO: this is still hard coded - relies on 64 crop size
         self.fc = nn.Linear(32*29*29, rep_size)
 
     def forward(self, x):
