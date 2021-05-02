@@ -8,6 +8,7 @@ class Net(nn.Module):
     def __init__(self,
                  feat_extractor: str,
                  crop_size: int,
+                 rep_size: int,
                  hidden_size: int
                  ):
         super(Net, self).__init__()
@@ -48,16 +49,21 @@ class Net(nn.Module):
 
 
 class SimpleCNN(nn.Module):
-    def __init__(self, in_channels):
+    def __init__(self, in_channels, rep_size):
         super().__init__()
 
         self.conv1 = nn.Conv2d(in_channels, 16, 3, 1)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(16, 32, 3, 1)
 
+        # TODO: this is still hard coded
+        self.fc = nn.Linear(32*29*29, rep_size)
+
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
         x = F.relu(self.conv2(x))
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
         return x
 
 
@@ -70,6 +76,7 @@ class PretrainedResnet18(nn.Module):
         self.resnet.fc = Identity()
 
         # freeze all layers
+        # TODO: unfreeze after 50/100 epochs
         for param in self.resnet.parameters():
             param.requires_grad = False
 
