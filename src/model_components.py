@@ -17,7 +17,7 @@ class Net(nn.Module):
             if feat_extractor == 'simple':
                 self.representation_layer = SimpleCNN(in_channels=3, rep_size=rep_size)
             elif feat_extractor == 'resnet':
-                self.representation_layer = PretrainedResnet18()
+                self.representation_layer = PretrainedResnet18(rep_size=rep_size)
         except ValueError:
             print("No proper feature extractor name provided")
 
@@ -69,19 +69,21 @@ class SimpleCNN(nn.Module):
 
 # NOTE - the image size must be greater than 64 x 64 for this to work from what i can tell (bc of the many downsampling layers)
 class PretrainedResnet18(nn.Module):
-    def __init__(self):
+    def __init__(self, rep_size):
         super().__init__()
         self.resnet = resnet18(pretrained=True)
         self.resnet.avgpool = Identity()
         self.resnet.fc = Identity()
+        self.fc = nn.Linear(2048, rep_size)
 
         # freeze all layers
-        # TODO: unfreeze after 50/100 epochs
-        for param in self.resnet.parameters():
-            param.requires_grad = False
+        #for param in self.resnet.parameters():
+            #param.requires_grad = False
 
     def forward(self, x):
-        return self.resnet(x)
+        x = self.resnet(x)
+        x = self.fc(x)
+        return x
 
 
 

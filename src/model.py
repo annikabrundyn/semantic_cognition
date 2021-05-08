@@ -19,6 +19,7 @@ class BaseModel(pl.LightningModule):
                  hidden_size: int,
                  lr: float,
                  save_epoch_freq: int,
+                 unfreeze_epoch_no: int,
                  *args,
                  **kwargs):
         super().__init__()
@@ -32,10 +33,22 @@ class BaseModel(pl.LightningModule):
         # same as HW
         self.criterion = nn.MSELoss()
 
+        if self.hparams.feat_extractor == "resnet":
+            self.frozen = True
+            for parameter in self.net.representation_layer.parameters():
+                parameter.requires_grad = False
+
     def forward(self, img, rel):
         return self.net(img, rel)
 
     def training_step(self, batch, batch_idx):
+
+
+        if (self.hparams.feat_extractor == "resnet") and (self.current_epoch >= self.hparams.unfreeze_epoch_no) and self.frozen:
+            self.frozen = False
+            for parameter in self.net.representation_layer.parameters():
+                parameter.requires_grad = True
+
 
         # call forward
         pred, hidden, rep = self(batch['img'], batch['rel'])
@@ -67,6 +80,7 @@ class BaseModel(pl.LightningModule):
         parser.add_argument("--hidden_size", type=int, default=256)
         parser.add_argument("--imgs_per_item", type=int, help='number of examples per item category', default=250)
         parser.add_argument("--save_epoch_freq", type=int, help='how often to save representations', default=20)
+        parser.add_argument("--unfreeze_epoch_no", type=int, help='when to unfreeze if resnet', default=50)
 
         # hyperparameters
         parser.add_argument("--lr", type=float, default=0.0001, help="learning rate")
