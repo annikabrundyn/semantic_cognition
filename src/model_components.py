@@ -21,8 +21,6 @@ class Net(nn.Module):
         except ValueError:
             print("No proper feature extractor name provided")
 
-        #rep_size = self._calculate_rep_size(crop_size)
-
         self.hidden_layer = nn.Linear(rep_size+4, hidden_size)
         self.attribute_layer = nn.Linear(hidden_size, 36)
 
