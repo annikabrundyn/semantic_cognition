@@ -43,8 +43,8 @@ class BaseModel(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
 
-
         if (self.hparams.feat_extractor == "resnet") and (self.current_epoch >= self.hparams.unfreeze_epoch_no) and self.frozen:
+            print("now unfreezing")
             self.frozen = False
             for parameter in self.net.representation_layer.parameters():
                 parameter.requires_grad = True
